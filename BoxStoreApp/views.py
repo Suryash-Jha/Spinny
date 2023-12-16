@@ -12,6 +12,20 @@ from .models import BoxModel
 def hello(req):
     return HttpResponse('Hello, world!')
 
+def is_authenticated(req):
+    if req.user.is_authenticated:
+        return True
+    else:
+        return False
+
+def is_staff(req):
+    if req.user.is_staff:
+        return True
+    else:
+        return False
+
+
+
 @csrf_exempt
 def register(req):
     if req.method == 'POST':
@@ -61,13 +75,47 @@ def addBox(req):
         boxArea= 2*(boxLength*boxWidth +boxLength*boxHeight +boxWidth*boxHeight )
         boxVolume= boxLength*boxWidth*boxHeight
 
-        box = BoxModel.objects.create(name=boxName, length=boxLength, width=boxWidth, height=boxHeight, area=boxArea, volume= boxVolume, created_by= boxCreated_by, created_at=boxUpdated_by)
+        box = BoxModel.objects.create(name=boxName, length=boxLength, width=boxWidth, height=boxHeight, area=boxArea, volume= boxVolume, created_by= boxCreated_by, updated_by=boxUpdated_by)
         
         box.save()
-        print(BoxModel.objects.all())
+        print(BoxModel.objects.all().values())
         return HttpResponse('Box created')
     else:
         return HttpResponse('Error creating box')
 
 
 # Create your views here.
+@csrf_exempt
+def updateBox(req, id):
+    if req.method == 'POST':
+        boxName = req.POST['name']
+        boxLength = int(req.POST['length'])
+        boxWidth = int(req.POST['width'])
+        boxHeight = int(req.POST['height'])
+        boxUpdated_by = req.POST['updated_by']
+        boxArea= 2*(boxLength*boxWidth +boxLength*boxHeight +boxWidth*boxHeight )
+        boxVolume= boxLength*boxWidth*boxHeight
+
+        box = BoxModel.objects.get(id=id)
+        box.name= boxName
+        box.length= boxLength
+        box.width= boxWidth
+        box.height= boxHeight
+        box.area= boxArea
+        box.volume= boxVolume
+        box.updated_by= boxUpdated_by
+        box.save()
+        return HttpResponse('Box updated')
+    else:
+        return HttpResponse('Error updating box')
+
+@csrf_exempt
+def deleteBox(req, id):
+    # if req.method == 'DELETE' and is_authenticated(req) and is_staff(req):
+    if req.method == 'DELETE':
+
+        box = BoxModel.objects.get(id=id)
+        box.delete()
+        return HttpResponse('Box deleted')
+    else:
+        return HttpResponse('Error deleting box')
