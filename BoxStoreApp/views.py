@@ -85,8 +85,8 @@ def addBox(req):
         boxLength = int(req.POST['length'])
         boxWidth = int(req.POST['width'])
         boxHeight = int(req.POST['height'])
-        boxCreated_by = req.POST['created_by']
-        boxUpdated_by = req.POST['updated_by']
+        boxCreated_by = req.user.username
+        boxUpdated_by = req.user.username
         boxArea= 2*(boxLength*boxWidth +boxLength*boxHeight +boxWidth*boxHeight )
         boxVolume= boxLength*boxWidth*boxHeight
         valid, msg= validate_box(boxCreated_by, boxArea, boxVolume)
@@ -112,7 +112,7 @@ def updateBox(req, id):
         boxLength = int(req.POST['length'])
         boxWidth = int(req.POST['width'])
         boxHeight = int(req.POST['height'])
-        boxUpdated_by = req.POST['updated_by']
+        boxUpdated_by = req.user.username
         boxArea= 2*(boxLength*boxWidth +boxLength*boxHeight +boxWidth*boxHeight )
         boxVolume= boxLength*boxWidth*boxHeight
 
