@@ -12,6 +12,7 @@ from rest_framework.decorators import authentication_classes, permission_classes
 from django.db.models import Sum, Q
 from django.conf import settings
 from datetime import datetime
+from .validation import validate_box
 # settings.configure()
 
 
@@ -88,12 +89,15 @@ def addBox(req):
         boxUpdated_by = req.POST['updated_by']
         boxArea= 2*(boxLength*boxWidth +boxLength*boxHeight +boxWidth*boxHeight )
         boxVolume= boxLength*boxWidth*boxHeight
-
-        box = BoxModel.objects.create(name=boxName, length=boxLength, width=boxWidth, height=boxHeight, area=boxArea, volume= boxVolume, created_by= boxCreated_by, updated_by=boxUpdated_by)
-        
-        box.save()
-        print(BoxModel.objects.all().values())
-        return HttpResponse('Box created')
+        valid, msg= validate_box(boxCreated_by, boxArea, boxVolume)
+        if valid:
+            box = BoxModel.objects.create(name=boxName, length=boxLength, width=boxWidth, height=boxHeight, area=boxArea, volume= boxVolume, created_by= boxCreated_by, updated_by=boxUpdated_by)
+            box.save()
+            print(BoxModel.objects.all().values())
+            return HttpResponse('Box created')
+        else:
+            resp= 'Constraints failed. Box addition failed due to '+ msg
+            return HttpResponse(resp)
     else:
         return HttpResponse('Error creating box'+ str(req.user.is_authenticated)+ str(req.user.is_staff))
 
@@ -113,15 +117,22 @@ def updateBox(req, id):
         boxVolume= boxLength*boxWidth*boxHeight
 
         box = BoxModel.objects.get(id=id)
-        box.name= boxName
-        box.length= boxLength
-        box.width= boxWidth
-        box.height= boxHeight
-        box.area= boxArea
-        box.volume= boxVolume
-        box.updated_by= boxUpdated_by
-        box.save()
-        return HttpResponse('Box updated')
+        old_area= box.area
+        old_volume= box.volume
+        valid, msg= validate_box(box.created_by, boxArea-old_area, boxVolume-old_volume)
+        if valid:
+            box.name= boxName
+            box.length= boxLength
+            box.width= boxWidth
+            box.height= boxHeight
+            box.area= boxArea
+            box.volume= boxVolume
+            box.updated_by= boxUpdated_by
+            box.save()
+            return HttpResponse('Box updated')
+        else:
+            return HttpResponse('Constraints failed. Box updation failed due to ', msg)
+
     else:
         return HttpResponse('Error updating box')
 
