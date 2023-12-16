@@ -152,12 +152,18 @@ def deleteBox(req, id):
 def listBox(req):
     if req.method == 'GET' and is_authenticated(req):
         boxes = BoxModel.objects.all().values()
+        if not is_staff(req):
+            exclude_keys = ['created_by', 'updated_by']
+            # Remove keys from each dictionary in the queryset
+            filtered_boxes = [{key: value for key, value in box.items() if key not in keys_to_exclude} for box in boxes]
+            boxes= filtered_boxes
+            
         total_area= BoxModel.objects.aggregate(Sum('area'))
         total_volume= BoxModel.objects.aggregate(Sum('volume'))
         total_individual_box_count= BoxModel.objects.filter(created_by=req.user.username).count()
         total_boxes= BoxModel.objects.all().count()
         filtered_data= filter_boxes(req)
-        return JsonResponse({'status': 200, 'boxes': list(boxes), 'filtered Data': str(filtered_data), 'user': str(req.user), 'total_area': total_area, 'total_volume': total_volume, 'total_individual_area': total_individual_box_count, 'total_boxes': total_boxes})
+        return JsonResponse({'status': 200,'filtered Data': str(filtered_data), 'user': str(req.user), 'total_area': total_area, 'total_volume': total_volume, 'total_individual_area': total_individual_box_count, 'total_boxes': total_boxes})
     else:
         return HttpResponse('Error listing boxes')
 
@@ -198,6 +204,19 @@ def filter_boxes(request):
         
         if created_by:
             boxes= boxes.filter(created_by= created_by)
-        
+        if not is_staff(req):
+            exclude_keys = ['created_by', 'updated_by']
+            filtered_boxes = [{key: value for key, value in box.items() if key not in keys_to_exclude} for box in boxes]
+            boxes= filtered_boxes
         # print(boxes.values())
         return boxes.values()
+
+
+@csrf_exempt
+def listBoxMe(req):
+    if req.method == 'GET' and is_authenticated(req) and is_staff(req):
+        boxes = BoxModel.objects.filter(created_by=req.user.username).values()
+        total_individual_box_count= BoxModel.objects.filter(created_by=req.user.username).count()
+        return JsonResponse({'status': 200,'boxes': str(boxes), 'user': str(req.user),'total_individual_count': total_individual_box_count})
+    else:
+        return HttpResponse('Error listing boxes')
