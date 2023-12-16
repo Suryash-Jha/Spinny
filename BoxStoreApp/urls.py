@@ -1,7 +1,10 @@
 from django.urls import path, include
+from . import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include(BoxStoreApp.urls))
-    
+    path('hello/', views.hello, name='hello'),
+    path('login/', views.loginx, name='login'),
+    path('logout/', views.logoutx, name='logout'),
+    path('register/', views.register, name='register'),
+    path('add/', views.addBox, name='add'),
 ]

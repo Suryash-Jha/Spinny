@@ -126,6 +126,8 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
+AUTH_USER_MODEL = 'BoxStoreApp.customUser'
+
 # constraints
 A1= 100
 V1= 1000
