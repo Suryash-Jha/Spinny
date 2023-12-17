@@ -20,18 +20,25 @@ def hello(req):
     return HttpResponse('Hello, world!')
 
 def is_authenticated(req):
+
     if req.user.is_authenticated:
         return True
     else:
         return False
 
 def get_user(req):
-    auth_header = req.headers.get('Authorization')
-    auth_token = auth_header[6:]
-    user = Token.objects.get(key=auth_token).user
-    return user
+    try:
+        auth_header = req.headers.get('Authorization')
+        auth_token = auth_header[6:]
+        user = Token.objects.get(key=auth_token).user
+        return user
+    except:
+        return None
 
 def is_staff(user):
+    if user is None:
+        return False
+
     if user.is_staff:
         return True
     else:
@@ -40,35 +47,39 @@ def is_staff(user):
 @csrf_exempt
 def register(req):
     if req.method == 'POST':
-        username = req.POST['username']
-        password = req.POST['password']
-        usertype = req.POST['type']
-        if usertype == 'staff':
-            usertype = True
-        else:
-            usertype = False
-        user = User.objects.create_user(username= username, is_staff= usertype, password=password)
-        user.save()
-
-        return HttpResponse('User created')
+        try:
+            username = req.POST['username']
+            password = req.POST['password']
+            usertype = req.POST['type']
+            if usertype == 'staff':
+                usertype = True
+            else:
+                usertype = False
+            user = User.objects.create_user(username= username, is_staff= usertype, password=password)
+            user.save()
+            return JsonResponse({'status': 200, 'msg': 'User created'})
+        except:
+            return JsonResponse({'status': 400, 'msg': 'User creation failed'})
     else:
-        return HttpResponse('Error creating user')
-
+        return JsonResponse({'status': 400, 'msg': 'Try Post request'})
 @csrf_exempt
 def loginx(req):
     if req.method == 'POST':
-        username = req.POST['username']
-        password = req.POST['password']
-        user = authenticate(req, username=username, password=password)
-        if user is not None:
-            login(req, user)
-            token, created= Token.objects.get_or_create(user=user)
-            print(token.key)
-            return JsonResponse({'status': 200, 'token': token.key, 'user': user.username, 'isStaff': user.is_staff})
-        else:
-            return HttpResponse('Error logging in')
+        try:
+            username = req.POST['username']
+            password = req.POST['password']
+            user = authenticate(req, username=username, password=password)
+            if user is not None:
+                login(req, user)
+                token, created= Token.objects.get_or_create(user=user)
+                print(token.key)
+                return JsonResponse({'status': 200, 'token': token.key, 'user': user.username, 'isStaff': user.is_staff})
+            else:
+                return JsonResponse({'status': 400, 'msg': 'No User found'})
+        except:
+            return JsonResponse({'status': 400, 'msg': 'User Login failed'})
     else:
-        return HttpResponse('Error logging in')
+        return JsonResponse({'status': 400, 'msg': 'Try POST request'})
 
 @csrf_exempt
 def logoutx(req):
@@ -91,6 +102,7 @@ def home(req):
 @csrf_exempt
 def addBox(req):
     user=  get_user(req)
+
     if req.method == 'POST' and is_staff(user):
         boxName = req.POST['name']
         boxLength = int(req.POST['length'])
@@ -105,12 +117,12 @@ def addBox(req):
             box = BoxModel.objects.create(name=boxName, length=boxLength, width=boxWidth, height=boxHeight, area=boxArea, volume= boxVolume, created_by= boxCreated_by, updated_by=boxUpdated_by)
             box.save()
             print(BoxModel.objects.all().values())
-            return HttpResponse('Box created')
+            return JsonResponse({'msg': 'Box created', status: 200, 'box_id': box.id})
         else:
             resp= 'Constraints failed. Box addition failed due to '+ msg
-            return HttpResponse(resp)
+            return JsonResponse({'msg': 'Box creation Failed', 'status': 400, 'error': resp})
     else:
-        return HttpResponse('Error creating box'+ str(req.user.is_authenticated)+ str(req.user.is_staff))
+        return JsonResponse({'msg': 'Box creation Failed', 'status': 401, 'error': 'Try to use POST Request or try being a staff'})
 
 
 # Create your views here.
@@ -127,8 +139,11 @@ def updateBox(req, id):
         boxUpdated_by = user.username
         boxArea= 2*(boxLength*boxWidth +boxLength*boxHeight +boxWidth*boxHeight )
         boxVolume= boxLength*boxWidth*boxHeight
+        try:
+            box = BoxModel.objects.get(id=id)
+        except:
+            return JsonResponse({'msg': 'Box Updation Failed', status: 404, 'error': 'Box with given ID not found'})
 
-        box = BoxModel.objects.get(id=id)
         old_area= box.area
         old_volume= box.volume
         valid, msg= validate_box(box.created_by, boxArea-old_area, boxVolume-old_volume)
@@ -141,12 +156,13 @@ def updateBox(req, id):
             box.volume= boxVolume
             box.updated_by= boxUpdated_by
             box.save()
-            return HttpResponse('Box updated')
+            return JsonResponse({'msg': 'Box updated', 'status': 200, 'box_id': box.id})
         else:
-            return HttpResponse('Constraints failed. Box updation failed due to ', msg)
+            return JsonResponse({'msg': 'Box Updation Failed', 'status': 400, 'error': 'Constraints failed. Box updation failed due to '+ msg})
 
     else:
-        return HttpResponse('Error updating box')
+        return JsonResponse({'msg': 'Box Updation Failed', 'status': 401, 'error': 'Try to use POST Request or try being a staff'})
+
 
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -155,12 +171,14 @@ def deleteBox(req, id):
     user=  get_user(req)
     # if req.method == 'DELETE' and is_authenticated(req) and is_staff(req):
     if req.method == 'DELETE' and is_staff(user):
-        box = BoxModel.objects.get(id=id)
+        try:
+            box = BoxModel.objects.get(id=id)
+        except:
+            return JsonResponse({'msg': 'Box Deletion Failed', 'status': 404, 'error': 'Box with given ID not found'})
         box.delete()
-        return HttpResponse('Box deleted')
+        return JsonResponse({'msg': 'Box deleted', 'status': 200})
     else:
-        return HttpResponse('Error deleting box')
-
+        return JsonResponse({'msg': 'Box Deletion Failed', 'status': 401, 'error': 'Try to use DELETE Request or try being a staff'})
 
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -187,7 +205,7 @@ def listBox(req):
             }
             )
     else:
-        return HttpResponse('Error listing boxes')
+        return JsonResponse({'status': 400, 'msg': 'Try GET request'})
 
 
 
@@ -246,8 +264,11 @@ def filter_boxes(request, user):
 def listBoxMe(req):
     user= get_user(req)
     if req.method == 'GET':
-        boxes = BoxModel.objects.filter(created_by=user.username).values()
-        total_individual_box_count= BoxModel.objects.filter(created_by=user.username).count()
-        return JsonResponse({'status': 200,'boxes': str(boxes), 'user': str(user),'total_individual_count': total_individual_box_count})
+        try:
+            boxes = BoxModel.objects.filter(created_by=user.username).values()
+            total_individual_box_count= BoxModel.objects.filter(created_by=user.username).count()
+            return JsonResponse({'status': 200,'boxes': str(boxes), 'user': str(user),'total_individual_count': total_individual_box_count})
+        except:
+            return JsonResponse({'status': 400, 'msg': 'No boxes found or User not found'})
     else:
-        return HttpResponse('Error listing boxes'+ str(user)+ str(user.username))
+        return JsonResponse({'status': 400, 'msg': 'Try GET request'})
