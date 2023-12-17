@@ -57,6 +57,7 @@
       margin: 1vh;
       padding: 1vh;
       border: 2px solid #000;
+      box-shadow: 10px 5px 5px #000;
       border-radius: 3vh;
     }
 
@@ -72,7 +73,7 @@
       font-size: 1.5rem;
       font-weight: 600;
       color: #000;
-      width: 50%;
+      width: 40%;
 
       background-color: #f1f1f1;
     }
@@ -87,6 +88,9 @@
     .red {
       color: red;
     }
+    .blue {
+      color: blue;
+    }
     .get {
       background-color: rgb(1, 71, 1);
     }
@@ -96,11 +100,24 @@
     .delete {
       background-color: rgb(85, 5, 5);
     }
-    footer {
-      clear: both;
-      position: relative;
-      height: 200px;
-      margin-top: -200px;
+
+    .container3 {
+      width: 70vw;
+      height: 100vh;
+      background-color: #f1f1f1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      border: 2px solid #000;
+      /* border-radius: 3vh; */
+      margin: 2vh;
+    }
+    filter_content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
   </style>
   <body>
@@ -129,12 +146,12 @@
         </div>
         <div class="ep">
           <p class="reType post">POST</p>
-          <p class="epVal">/update/<span class="red">id</span></p>
+          <p class="epVal">/update/<span class="red">id</span>/</p>
           <p class="purp">Update a box (<span class="red">ONLY STAFF</span>)</p>
         </div>
         <div class="ep">
           <p class="reType delete">DELETE</p>
-          <p class="epVal">/delete/<span class="red">id</span></p>
+          <p class="epVal">/delete/<span class="red">id</span>/</p>
           <p class="purp">Delete a box (<span class="red">ONLY STAFF</span>)</p>
         </div>
         <div class="ep">
@@ -160,6 +177,7 @@
           </p>
         </div>
       </div>
+    </div>
     </div>
   </body>
 </html>
