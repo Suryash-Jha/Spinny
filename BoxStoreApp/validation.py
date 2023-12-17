@@ -3,6 +3,7 @@ from .models import BoxModel
 from django.db.models import Sum, Q
 # settings.configure()
 # from ..MainProj import settings
+from django.utils import timezone
 
 def validate_box(user, area, volume):
     max_area= settings.A1
@@ -11,10 +12,13 @@ def validate_box(user, area, volume):
     max_total_box= settings.L2
     print(max_area, max_volume, max_individual_box, max_total_box)
 
+    
+    last_week = timezone.now() - timezone.timedelta(days=7)
     total_area= BoxModel.objects.aggregate(Sum('area'))['area__sum']
     total_volume= BoxModel.objects.aggregate(Sum('volume'))['volume__sum']
-    total_box= BoxModel.objects.count()
-    total_individual_box= BoxModel.objects.filter(created_by=user).count()
+    total_individual_box= BoxModel.objects.filter(created_at__gte=last_week).filter(created_by=user).count()
+    total_box = BoxModel.objects.filter(created_at__gte=last_week).count()
+
 
     print("tot: ", total_area, total_volume, total_box, total_individual_box)
 
@@ -38,7 +42,8 @@ def validate_box(user, area, volume):
     
     if total_individual_box+1 > max_individual_box:
         return False, 'Total individual box exceeded'
-    
+
+
     if total_box+1 > max_total_box:
         return False, 'Total box exceeded'
 

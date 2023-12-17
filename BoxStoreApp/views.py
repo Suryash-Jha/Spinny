@@ -117,7 +117,7 @@ def addBox(req):
             box = BoxModel.objects.create(name=boxName, length=boxLength, width=boxWidth, height=boxHeight, area=boxArea, volume= boxVolume, created_by= boxCreated_by, updated_by=boxUpdated_by)
             box.save()
             print(BoxModel.objects.all().values())
-            return JsonResponse({'msg': 'Box created', status: 200, 'box_id': box.id})
+            return JsonResponse({'msg': 'Box created', 'status': 200, 'box_id': box.id})
         else:
             resp= 'Constraints failed. Box addition failed due to '+ msg
             return JsonResponse({'msg': 'Box creation Failed', 'status': 400, 'error': resp})
@@ -131,6 +131,8 @@ def addBox(req):
 @csrf_exempt
 def updateBox(req, id):
     user=  get_user(req)
+    if(id is None):
+        return JsonResponse({'msg': 'Box Updation Failed', 'status': 400, 'error': 'Box ID not found'})
     if req.method == 'POST' and is_staff(user):
         boxName = req.POST['name']
         boxLength = int(req.POST['length'])
@@ -142,7 +144,7 @@ def updateBox(req, id):
         try:
             box = BoxModel.objects.get(id=id)
         except:
-            return JsonResponse({'msg': 'Box Updation Failed', status: 404, 'error': 'Box with given ID not found'})
+            return JsonResponse({'msg': 'Box Updation Failed', 'status': 404, 'error': 'Box with given ID not found'})
 
         old_area= box.area
         old_volume= box.volume
@@ -169,6 +171,8 @@ def updateBox(req, id):
 @csrf_exempt
 def deleteBox(req, id):
     user=  get_user(req)
+    if(id is None):
+        return JsonResponse({'msg': 'Box Updation Failed', 'status': 400, 'error': 'Box ID not found'})
     # if req.method == 'DELETE' and is_authenticated(req) and is_staff(req):
     if req.method == 'DELETE' and is_staff(user):
         try:
@@ -226,7 +230,16 @@ def filter_boxes(request, user):
     width_less_than = request.GET.get('width_less_than', maxm)
 
     created_by = request.GET.get('created_by', None)
+    # some more defaults
+    created_before = request.GET.get('created_before', '31-12-2200')
+    created_after = request.GET.get('created_after', '01-01-1900')
+    
 
+    if created_after:
+        created_after = datetime.strptime(created_after, "%d-%m-%Y")
+
+    if created_before:
+        created_before = datetime.strptime(created_before, "%d-%m-%Y")
     # print('ll:', length_more_than, length_less_than)
     boxes= BoxModel.objects.filter(
         Q(length__gte=length_more_than) & 
@@ -238,11 +251,14 @@ def filter_boxes(request, user):
         Q(width__lte= width_less_than)&
         Q(height__lte= height_less_than)&
         Q(area__lte= area_less_than)&
-        Q(volume__lte= volume_less_than)
+        Q(volume__lte= volume_less_than)&
+        Q(created_at__gte=created_after)&
+        Q(created_at__lte=created_before)
         )
     
     if created_by:
         boxes = boxes.filter(created_by=created_by)
+    
 
     if not is_staff(user):
         exclude_keys = ['created_by', 'updated_by']
