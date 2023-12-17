@@ -26,6 +26,10 @@
 ## List My Boxes
 ![image](https://github.com/Suryash-Jha/Spinny/assets/84950710/c38dd9e2-c783-4119-b6f3-cad42863b2fd)
 
+## Change Configurations (Not Authenticated as of now)
+![image](https://github.com/Suryash-Jha/Spinny/assets/84950710/5e8cdab7-84f2-4509-957c-cb1ba9b5db2c)
+
+
 
 # Tips for testing Endpoints
 
