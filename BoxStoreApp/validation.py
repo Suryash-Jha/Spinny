@@ -1,15 +1,17 @@
 from django.conf import settings
-from .models import BoxModel
+from .models import BoxModel, constraints
 from django.db.models import Sum, Q
+
 # settings.configure()
 # from ..MainProj import settings
 from django.utils import timezone
 
 def validate_box(user, area, volume):
-    max_area= settings.A1
-    max_volume= settings.V1
-    max_individual_box= settings.L1
-    max_total_box= settings.L2
+    constraints_obj= constraints.objects.all().first()
+    max_area= constraints_obj.A1
+    max_volume= constraints_obj.V1
+    max_individual_box= constraints_obj.L1
+    max_total_box= constraints_obj.L2
     print(max_area, max_volume, max_individual_box, max_total_box)
 
     

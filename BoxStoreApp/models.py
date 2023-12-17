@@ -28,3 +28,15 @@ class customUser(AbstractUser):
     class Meta:
         db_table = "customUser"
 
+class constraints(models.Model):
+    id= models.AutoField(primary_key=True)
+    A1 = models.IntegerField(default=100)
+    V1 = models.IntegerField(default=1000)
+    L1 = models.IntegerField(default=100)
+    L2 = models.IntegerField(default=50)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        db_table = "constraints"
+

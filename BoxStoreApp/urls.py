@@ -12,5 +12,6 @@ urlpatterns = [
     path('delete/<int:id>/', views.deleteBox, name='delete'),
     path('list/', views.listBox, name='list'),
     path('listMe/', views.listBoxMe, name='listMe'),
+    path('constraints/', views.constraints_update, name='constraints'),
     
 ]

@@ -4,7 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 # from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout, get_user_model
 User = get_user_model()
-from .models import BoxModel
+from .models import BoxModel, constraints
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -288,5 +288,40 @@ def listBoxMe(req):
             return JsonResponse({'status': 200,'boxes': str(boxes), 'user': str(user),'total_individual_count': total_individual_box_count})
         except:
             return JsonResponse({'status': 400, 'msg': 'No boxes found or User not found'})
+    else:
+        return JsonResponse({'status': 400, 'msg': 'Try GET request'})
+
+@authentication_classes([TokenAuthentication])
+@csrf_exempt
+def constraints_update(req):
+    if constraints.objects.all().count() == 0:
+        constraints_obj= constraints.objects.create()
+        constraints_obj.save()
+    if req.method == 'GET':
+        try:
+            constraints_obj= constraints.objects.all().first()
+            max_area= constraints_obj.A1
+            max_volume= constraints_obj.V1
+            max_individual_box= constraints_obj.L1
+            max_total_box= constraints_obj.L2
+            return JsonResponse({'status': 200, 'max_area': max_area, 'max_volume': max_volume, 'max_individual_box': max_individual_box, 'max_total_box': max_total_box})
+        except:
+            return JsonResponse({'status': 400, 'msg': 'No constraints found'})
+    elif req.method == 'POST':
+        try:
+
+            max_area= int(req.POST['A1'])
+            max_volume= int(req.POST['V1'])
+            max_individual_box= int(req.POST['L1'])
+            max_total_box= int(req.POST['L2'])
+            constraints_obj= constraints.objects.all().first()
+            constraints_obj.A1= max_area
+            constraints_obj.V1= max_volume
+            constraints_obj.L1= max_individual_box
+            constraints_obj.L2= max_total_box
+            constraints_obj.save()
+            return JsonResponse({'status': 200, 'msg': 'Constraints updated'})
+        except Exception as e:
+            return JsonResponse({'status': 400, 'msg': 'Constraints updation failed', 'error': str(e)})
     else:
         return JsonResponse({'status': 400, 'msg': 'Try GET request'})
