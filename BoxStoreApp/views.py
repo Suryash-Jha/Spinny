@@ -174,7 +174,7 @@ def deleteBox(req, id):
     if(id is None):
         return JsonResponse({'msg': 'Box Updation Failed', 'status': 400, 'error': 'Box ID not found'})
     # if req.method == 'DELETE' and is_authenticated(req) and is_staff(req):
-    if req.method == 'DELETE' and is_staff(user):
+    if req.method == 'DELETE' and is_staff(user) and user.username == BoxModel.objects.get(id=id).created_by:
         try:
             box = BoxModel.objects.get(id=id)
         except:
@@ -194,7 +194,7 @@ def listBox(req):
         total_volume= BoxModel.objects.aggregate(Sum('volume'))
         total_individual_box_count= BoxModel.objects.filter(created_by=user.username).count()
         total_boxes= BoxModel.objects.all().count()
-        filtered_data= filter_boxes(req, user)
+        filtered_data= filter_boxes(req, False, user)
         print(filtered_data)
         return JsonResponse(
             {
@@ -214,7 +214,7 @@ def listBox(req):
 
 
 
-def filter_boxes(request, user):
+def filter_boxes(request, user_given, user):
     length_more_than = request.GET.get('length_more_than', 0)
     area_more_than = request.GET.get('area_more_than', 0)
     volume_more_than = request.GET.get('volume_more_than', 0)
@@ -230,6 +230,8 @@ def filter_boxes(request, user):
     width_less_than = request.GET.get('width_less_than', maxm)
 
     created_by = request.GET.get('created_by', None)
+    if user_given:
+        created_by= user.username
     # some more defaults
     created_before = request.GET.get('created_before', '31-12-2200')
     created_after = request.GET.get('created_after', '01-01-1900')
@@ -281,8 +283,8 @@ def listBoxMe(req):
     user= get_user(req)
     if req.method == 'GET':
         try:
-            boxes = BoxModel.objects.filter(created_by=user.username).values()
             total_individual_box_count= BoxModel.objects.filter(created_by=user.username).count()
+            boxes= filter_boxes(req, True, user)
             return JsonResponse({'status': 200,'boxes': str(boxes), 'user': str(user),'total_individual_count': total_individual_box_count})
         except:
             return JsonResponse({'status': 400, 'msg': 'No boxes found or User not found'})
