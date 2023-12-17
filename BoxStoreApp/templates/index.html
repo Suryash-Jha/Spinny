@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home Page</title>
+  </head>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    .container1 {
+      width: 100vw;
+      height: 80vh;
+      background-color: #f1f1f1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .container2 {
+      width: 100vw;
+      height: 50vh;
+      background-color: #f1f1f1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .mainBanner {
+      width: 100%;
+      background-color: #f1f1f1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .listOfEps {
+      width: 100%;
+      height: 100vh;
+      background-color: #f1f1f1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .ep {
+      display: flex;
+      width: 90%;
+      justify-content: space-between;
+      align-items: center;
+      margin: 1vh;
+      padding: 1vh;
+      border: 2px solid #000;
+      border-radius: 3vh;
+    }
+
+    .reType {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #fcfafa;
+      padding: 2vh;
+      border-radius: 3vh;
+    }
+
+    .purp {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #000;
+      width: 50%;
+
+      background-color: #f1f1f1;
+    }
+
+    .epVal {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #000;
+      background-color: #f1f1f1;
+      width: 30%;
+    }
+    .red {
+      color: red;
+    }
+    .get {
+      background-color: rgb(1, 71, 1);
+    }
+    .post {
+      background-color: rgb(1, 45, 63);
+    }
+    .delete {
+      background-color: rgb(85, 5, 5);
+    }
+    footer {
+      clear: both;
+      position: relative;
+      height: 200px;
+      margin-top: -200px;
+    }
+  </style>
+  <body>
+    <div class="container1">
+      <div class="mainBanner">
+        <img
+          src="https://play-lh.googleusercontent.com/8cN700bjsGKBh5ZQ8HGYhV_hhUczWXgiMrQvPFMNmwD8lxlk-q1kzdduZJAqjE0ZGeo=w240-h480-rw"
+          alt=""
+          style="border-radius: 3vh"
+        />
+        <h1>Box Store CRUD App</h1>
+        <h2>
+          By Suryash Kumar Jha |
+          <span
+            ><a href="https://github.com/suryash-jha/Spinny">Github</a></span
+          >
+        </h2>
+      </div>
+    </div>
+    <div class="container2">
+      <div class="listOfEps">
+        <div class="ep">
+          <p class="reType post">POST</p>
+          <p class="epVal">/add/</p>
+          <p class="purp">Add a box (<span class="red">ONLY STAFF</span>)</p>
+        </div>
+        <div class="ep">
+          <p class="reType post">POST</p>
+          <p class="epVal">/update/<span class="red">id</span></p>
+          <p class="purp">Update a box (<span class="red">ONLY STAFF</span>)</p>
+        </div>
+        <div class="ep">
+          <p class="reType delete">DELETE</p>
+          <p class="epVal">/delete/<span class="red">id</span></p>
+          <p class="purp">Delete a box (<span class="red">ONLY STAFF</span>)</p>
+        </div>
+        <div class="ep">
+          <p class="reType post">POST</p>
+          <p class="epVal">/register/</p>
+          <p class="purp">Register on the App</p>
+        </div>
+        <div class="ep">
+          <p class="reType post">POST</p>
+          <p class="epVal">/login/</p>
+          <p class="purp">Login and generate Auth Token</p>
+        </div>
+        <div class="ep">
+          <p class="reType get">GET</p>
+          <p class="epVal">/list/</p>
+          <p class="purp">List of all the boxes created</p>
+        </div>
+        <div class="ep">
+          <p class="reType get">GET</p>
+          <p class="epVal">/listMe/</p>
+          <p class="purp">
+            List Of Boxes created by user (<span class="red">ONLY STAFF</span>)
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

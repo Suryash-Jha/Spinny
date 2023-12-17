@@ -83,6 +83,9 @@ def isLogged(req):
         return HttpResponse('User is not logged in')
 
 
+def home(req):
+    return render(req, 'index.html')
+
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 @csrf_exempt
