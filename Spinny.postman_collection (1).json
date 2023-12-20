@@ -1,0 +1,255 @@
+{
+	"info": {
+		"_postman_id": "fbd99121-4e93-47f0-8ede-d4034c367314",
+		"name": "Spinny",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "24318290"
+	},
+	"item": [
+		{
+			"name": "Register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "spinny",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "spin123",
+							"type": "text"
+						},
+						{
+							"key": "type",
+							"value": "staff",
+							"type": "text"
+						}
+					]
+				},
+				"url": "https://suryashkumarjha.pythonanywhere.com/register/"
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "spinny",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "spin123",
+							"type": "text"
+						}
+					]
+				},
+				"url": "https://suryashkumarjha.pythonanywhere.com/login/"
+			},
+			"response": []
+		},
+		{
+			"name": "Add",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token da69f57ef4d909fa98eb3713ffc0ba729389bcb4",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "length",
+							"value": "2",
+							"type": "text"
+						},
+						{
+							"key": "width",
+							"value": "2",
+							"type": "text"
+						},
+						{
+							"key": "height",
+							"value": "2",
+							"type": "text"
+						},
+						{
+							"key": "width",
+							"value": "2",
+							"type": "text"
+						},
+						{
+							"key": "name",
+							"value": "box1",
+							"type": "text"
+						}
+					]
+				},
+				"url": "https://suryashkumarjha.pythonanywhere.com/add/"
+			},
+			"response": []
+		},
+		{
+			"name": "Update",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token da69f57ef4d909fa98eb3713ffc0ba729389bcb4",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "length",
+							"value": "3",
+							"type": "text"
+						},
+						{
+							"key": "height",
+							"value": "1",
+							"type": "text"
+						},
+						{
+							"key": "width",
+							"value": "2",
+							"type": "text"
+						},
+						{
+							"key": "name",
+							"value": "Box1",
+							"type": "text"
+						}
+					]
+				},
+				"url": "https://suryashkumarjha.pythonanywhere.com/update/1/"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token da69f57ef4d909fa98eb3713ffc0ba729389bcb4",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": []
+				},
+				"url": "https://suryashkumarjha.pythonanywhere.com/delete/1/"
+			},
+			"response": []
+		},
+		{
+			"name": "Constraints",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token da69f57ef4d909fa98eb3713ffc0ba729389bcb4",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "A1",
+							"value": "300",
+							"type": "text"
+						},
+						{
+							"key": "V1",
+							"value": "300",
+							"type": "text"
+						},
+						{
+							"key": "L1",
+							"value": "1000",
+							"type": "text"
+						},
+						{
+							"key": "L2",
+							"value": "300",
+							"type": "text"
+						}
+					]
+				},
+				"url": "https://suryashkumarjha.pythonanywhere.com/constraints/"
+			},
+			"response": []
+		},
+		{
+			"name": "List",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token da69f57ef4d909fa98eb3713ffc0ba729389bcb4",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://suryashkumarjha.pythonanywhere.com/list/?length_more_than=5",
+					"protocol": "https",
+					"host": [
+						"suryashkumarjha",
+						"pythonanywhere",
+						"com"
+					],
+					"path": [
+						"list",
+						""
+					],
+					"query": [
+						{
+							"key": "length_more_than",
+							"value": "5"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List My Boxes",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token da69f57ef4d909fa98eb3713ffc0ba729389bcb4",
+						"type": "text"
+					}
+				],
+				"url": "https://suryashkumarjha.pythonanywhere.com/listMe/"
+			},
+			"response": []
+		}
+	]
+}
